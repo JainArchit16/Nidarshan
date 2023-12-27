@@ -20,9 +20,12 @@ const Navbar = () => {
         <img src={logo} alt="logo" className="w-[45px] px-2" />
         <p>Nidarshan</p>
       </div>
-      <div>
+      <div className="flex flex-row gap-6">
         <Link to="/">
           <p>Home</p>
+        </Link>
+        <Link to="/blog-page">
+          <p>Blogs</p>
         </Link>
       </div>
       <div className="flex flex-row gap-2 items-center">

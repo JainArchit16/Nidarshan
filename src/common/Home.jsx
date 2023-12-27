@@ -5,6 +5,7 @@ import image4 from "../assets/doctor3.jpg";
 import { FaArrowRight } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import Services from "../components/HomePage/Services";
+import Blogs from "../components/HomePage/Blogs";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -61,6 +62,12 @@ const Home = () => {
       </div>
 
       <Services />
+      <div className="w-full">
+        <p className="text-[#d3e3fd] text-3xl text-center font-semibold">
+          Blogs
+        </p>
+        <Blogs />
+      </div>
     </div>
   );
 };

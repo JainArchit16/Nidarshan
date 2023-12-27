@@ -11,6 +11,7 @@ import Setting from "./components/Dashboard/Setting";
 import MyProfile from "./components/Dashboard/MyProfile";
 import Writeblog from "./components/Dashboard/Writeblog";
 import MyBlogs from "./components/Dashboard/MyBlogs";
+import BlogPage from "./common/BlogPage";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="*" element={<Error />}></Route>
         <Route path="/login" element={<Login />}></Route>
         <Route path="/signup" element={<Signup />}></Route>
+        <Route path="/blog-page" element={<BlogPage />}></Route>
 
         <Route
           path="/dashboard"
