@@ -4,12 +4,11 @@ import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import image2 from "../assets/image2.png";
 import { FaGoogle } from "react-icons/fa";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { auth } from "../config/firebase";
 import { toast } from "react-hot-toast";
 import { setsignupData } from "../slices/authSlice";
 import Loader from "../common/Loader";
-import { signInWithPopup } from "firebase/auth";
 import { provider } from "../config/firebase";
 
 function LoginForm() {
@@ -21,9 +20,6 @@ function LoginForm() {
   });
 
   const [showPassword, setShowPassword] = useState(false);
-
-  const { email, password } = formData;
-
   const [loading, setLoading] = useState(false);
 
   const handleOnChange = (e) => {
@@ -33,49 +29,51 @@ function LoginForm() {
     }));
   };
 
-  const handleGoogle = () => {
-    signInWithPopup(auth, provider)
-      .then((result) => {
-        // console.log(result);
-        dispatch(setsignupData(result.user));
-        navigate("/");
-      })
-      .catch((error) => {
-        toast.error(error.message);
-        console.log(error);
-      });
+  const handleGoogle = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+
+      const serializableUserData = result.user.toJSON();
+      dispatch(setsignupData(serializableUserData));
+      // dispatch(setsignupData(userData));
+      navigate("/");
+    } catch (error) {
+      toast.error(error.message);
+      console.error(error);
+    }
   };
 
-  const handleOnSubmit = (e) => {
-    setLoading(true);
+  const handleOnSubmit = async (e) => {
     e.preventDefault();
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed in
-        // const user = userCredential.user;
+    setLoading(true);
 
-        dispatch(setsignupData(userCredential.user));
-        console.log(userCredential);
-        setLoading(false);
-        navigate("/");
-        // console.log(user);
-      })
-      .catch((error) => {
-        // console.log("byr");
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        toast.error(errorMessage);
-        console.log(errorCode, errorMessage);
-      });
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        formData.email,
+        formData.password
+      );
+
+      const serializableUserData = userCredential.user.toJSON();
+      dispatch(setsignupData(serializableUserData));
+      console.log(serializableUserData);
+      navigate("/");
+    } catch (error) {
+      const errorMessage = error.message;
+      toast.error(errorMessage);
+      console.error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return !loading ? (
     <>
-      <div className="flex flex-row justify-between items-center h-screen mx-32">
+      <div className="flex flex-row justify-between items-center h-fit mx-32 my-auto">
         <div className="w-[30%] bg-[#0842a0] rounded-xl p-10">
           <form
             onSubmit={handleOnSubmit}
-            className="flex w-full flex-col gap-y-4   rounded-xl text-[#d3e3fd]"
+            className="flex w-full flex-col gap-y-4 rounded-xl text-[#d3e3fd]"
           >
             <label className="w-full">
               <p className="mb-1 text-[0.875rem] leading-[1.375rem] text-[#d3e3fd]">
@@ -85,7 +83,7 @@ function LoginForm() {
                 required
                 type="text"
                 name="email"
-                value={email}
+                value={formData.email}
                 onChange={handleOnChange}
                 placeholder="Enter email address"
                 style={{
@@ -102,7 +100,7 @@ function LoginForm() {
                 required
                 type={showPassword ? "text" : "password"}
                 name="password"
-                value={password}
+                value={formData.password}
                 onChange={handleOnChange}
                 placeholder="Enter Password"
                 style={{
@@ -131,13 +129,13 @@ function LoginForm() {
             <button
               type="submit"
               onClick={handleOnSubmit}
-              className="mt-6 rounded-[8px] bg-[#f1f8ff] text-black py-[8px] px-[12px] font-medium "
+              className="mt-6 rounded-[8px] bg-[#f1f8ff] text-black py-[8px] px-[12px] font-medium"
             >
               Login
             </button>
             <div className="text-center">- OR -</div>
             <button
-              className=" rounded-[8px] bg-[#f1f8ff] text-black py-[8px] px-[12px] font-medium flex flex-row justify-center items-center gap-3"
+              className="rounded-[8px] bg-[#f1f8ff] text-black py-[8px] px-[12px] font-medium flex flex-row justify-center items-center gap-3"
               onClick={handleGoogle}
             >
               <FaGoogle />
@@ -154,7 +152,7 @@ function LoginForm() {
       </div>
     </>
   ) : (
-    <Loader></Loader>
+    <Loader />
   );
 }
 
