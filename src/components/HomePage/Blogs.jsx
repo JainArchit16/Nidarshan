@@ -8,9 +8,6 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "../../App.css";
 
-// Icons
-import { FaStar } from "react-icons/fa";
-
 // Import required modules
 import { Autoplay, FreeMode, Pagination, Navigation } from "swiper/modules";
 import { collection, getDocs } from "firebase/firestore";
